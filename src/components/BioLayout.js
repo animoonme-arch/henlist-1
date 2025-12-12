@@ -85,7 +85,7 @@ export default function BioLayout({ appData, adScripts }) {
       style={{
         [getCssVars()]: "",
         maxHeight: "100vh",
-        overflowY: "hidden",
+        overflowY: "auto",
       }}
     >
       {/* SAFE Script injection */}
