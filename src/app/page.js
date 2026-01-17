@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const DEFAULT_AD_LINK =
-    "https://brownrealization.com/ukqgqrv4n?key=acf2a1b713094b78ec1cc21761e9b149";
+    "https://capriceawelessaweless.com/ukqgqrv4n?key=acf2a1b713094b78ec1cc21761e9b149";
   let dynamicAdLink = DEFAULT_AD_LINK;
   // --- SERVER-SIDE LOGIC EXECUTION ---
   const totalVisibleCount = getVisiblePostCount();
