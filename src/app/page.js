@@ -44,7 +44,7 @@ export default async function HomePage() {
         appData={appData}
         adScripts={{ adScriptTop, adScriptBottom }}
       />
-      <Advertize initialAdLink={dynamicAdLink} />
+      {/* <Advertize initialAdLink={dynamicAdLink} /> */}
     </>
   );
 }
