@@ -140,7 +140,7 @@ export default function BioLayout({ appData }) {
             {slabsToRender.map((item) => (
               <SauceSlab
                 key={item.post._id}
-                url={item.post.videoUrl || item.post.url}
+                url={ item.post.url}
                 thumbnail={item.post.thumbnail}
                 index={item.index}
                 totalPosts={totalPosts}
