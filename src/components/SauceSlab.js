@@ -8,7 +8,7 @@ export default function SauceSlab({
   totalPosts,
   theme,
 }) {
-  const postNumber = totalPosts - index; // #1, #2, etc.
+  const postNumber = totalPosts - index;
 
   return (
     <div
@@ -25,18 +25,28 @@ export default function SauceSlab({
       }}
       onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
     >
+      {/* Thumbnail on left */}
       <img
         src={thumbnail || "/placeholder.jpg"}
         alt="thumbnail"
         style={{
-          height: "70px",
+          height: "50px",
           width: "auto",
           objectFit: "cover",
           borderRadius: "6px",
         }}
       />
 
-      <div style={{ color: theme.linkColor, fontWeight: "500" }}>
+      {/* Centered text */}
+      <div
+        style={{
+          color: theme.linkColor,
+          fontWeight: "500",
+          flexGrow: 1,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
         <span style={{ color: theme.avatarBorder }}>#{postNumber}</span> Sauce
       </div>
     </div>
