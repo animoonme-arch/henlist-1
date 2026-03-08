@@ -9,16 +9,20 @@ export default function SauceSlab({
 }) {
   const postNumber = totalPosts - index;
 
+  const handleClick = () => {
+    if (!url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div
       className="bio-link sauce-slab"
       style={{
         background: theme.linkBg,
         boxShadow: theme.linkShadow,
+        cursor: "pointer",
       }}
-      onClick={() =>
-        window.open(url, "_blank", "noopener,noreferrer")
-      }
+      onClick={handleClick}
     >
       <img
         src={thumbnail || "/placeholder.jpg"}
