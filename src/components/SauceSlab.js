@@ -1,3 +1,4 @@
+// src/components/SauceSlab.js
 "use client";
 
 export default function SauceSlab({
@@ -7,37 +8,36 @@ export default function SauceSlab({
   totalPosts,
   theme,
 }) {
-  const postNumber = totalPosts - index;
-
-  const handleClick = () => {
-    if (!url) return;
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
+  const postNumber = totalPosts - index; // #1, #2, etc.
 
   return (
     <div
       className="bio-link sauce-slab"
       style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        padding: "5px 10px",
+        cursor: "pointer",
         background: theme.linkBg,
         boxShadow: theme.linkShadow,
-        cursor: "pointer",
+        borderRadius: "8px",
       }}
-      onClick={handleClick}
+      onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
     >
       <img
         src={thumbnail || "/placeholder.jpg"}
-        className="sauce-thumb"
         alt="thumbnail"
+        style={{
+          height: "70px",
+          width: "auto",
+          objectFit: "cover",
+          borderRadius: "6px",
+        }}
       />
 
-      <div
-        className="sauce-text"
-        style={{ color: theme.linkColor }}
-      >
-        <span style={{ color: theme.avatarBorder }}>
-          #{postNumber}
-        </span>{" "}
-        Sauce
+      <div style={{ color: theme.linkColor, fontWeight: "500" }}>
+        <span style={{ color: theme.avatarBorder }}>#{postNumber}</span> Sauce
       </div>
     </div>
   );
