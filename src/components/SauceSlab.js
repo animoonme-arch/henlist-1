@@ -1,90 +1,40 @@
-// src/components/SauceSlab.js
 "use client";
 
-import React from "react";
-
 export default function SauceSlab({
-  title, // FULL URL (hidden from UI)
+  url,
+  thumbnail,
   index,
   totalPosts,
   theme,
-  isVisible,
-  isNextUpcoming,
 }) {
   const postNumber = totalPosts - index;
-  const linkColor = theme.linkColor;
-  const postNumberColor = theme.avatarBorder;
-
-  let content,
-    linkStyle,
-    isClickable = false;
-
-  if (!isVisible && isNextUpcoming) {
-    linkStyle = {
-      background: "rgba(0, 0, 0, 0.4)",
-      opacity: 0.5,
-      cursor: "default",
-      boxShadow: "none",
-    };
-    content = (
-      <div
-        style={{
-          flex: 1,
-          textAlign: "center",
-          fontSize: "1.1rem",
-          fontWeight: 600,
-          color: linkColor,
-        }}
-      >
-        <span style={{ color: postNumberColor, marginRight: 5 }}>
-          #{postNumber}
-        </span>
-        Coming Soon...
-      </div>
-    );
-  } else if (isVisible) {
-    isClickable = true;
-
-    linkStyle = {
-      background: theme.linkBg,
-      boxShadow: theme.linkShadow,
-    };
-
-    content = (
-      <div
-        style={{
-          flex: 1,
-          textAlign: "center",
-          fontSize: "1.1rem",
-          fontWeight: 700,
-          color: linkColor,
-        }}
-      >
-        <span style={{ color: postNumberColor, marginRight: 5 }}>
-          #{postNumber}
-        </span>
-        Sauce
-      </div>
-    );
-  } else {
-    return null;
-  }
 
   return (
     <div
-      className="bio-link"
-      data-post-number={postNumber}
+      className="bio-link sauce-slab"
       style={{
-        ...linkStyle,
-        cursor: isClickable ? "pointer" : "default",
+        background: theme.linkBg,
+        boxShadow: theme.linkShadow,
       }}
-      onClick={
-        isClickable
-          ? () => window.open(title, "_blank", "noopener,noreferrer")
-          : null
+      onClick={() =>
+        window.open(url, "_blank", "noopener,noreferrer")
       }
     >
-      {content}
+      <img
+        src={thumbnail || "/placeholder.jpg"}
+        className="sauce-thumb"
+        alt="thumbnail"
+      />
+
+      <div
+        className="sauce-text"
+        style={{ color: theme.linkColor }}
+      >
+        <span style={{ color: theme.avatarBorder }}>
+          #{postNumber}
+        </span>{" "}
+        Sauce
+      </div>
     </div>
   );
 }
