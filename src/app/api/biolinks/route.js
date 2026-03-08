@@ -1,68 +1,98 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import * as cheerio from "cheerio";
 
 export async function GET() {
-  const db = await connectDB();
+  try {
+    const db = await connectDB();
 
-  const links = await db
-    .collection("biolinks")
-    .find({})
-    .sort({ order: 1 })
-    .toArray();
+    const links = await db
+      .collection("biolinks")
+      .find({})
+      .sort({ order: 1 })
+      .toArray();
 
-  return NextResponse.json(links);
+    return NextResponse.json(links);
+  } catch {
+    return NextResponse.json({ error: "Fetch failed" }, { status: 500 });
+  }
 }
 
 export async function POST(req) {
-  const db = await connectDB();
-  const { url } = await req.json();
+  try {
+    const db = await connectDB();
+    const { url } = await req.json();
 
-  const res = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0" },
-  });
+    if (!url) {
+      return NextResponse.json({ error: "URL required" }, { status: 400 });
+    }
 
-  const html = await res.text();
-  const $ = cheerio.load(html);
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
 
-  const title =
-    $("meta[property='og:title']").attr("content") ||
-    $("title").text();
+    const html = await res.text();
+    const $ = cheerio.load(html);
 
-  const thumbnail =
-    $("meta[property='og:image']").attr("content") ||
-    $("img").first().attr("src");
+    const thumbnail =
+      $("video.video-player").attr("poster") ||
+      $("meta[property='og:image']").attr("content") ||
+      "";
 
-  const last = await db
-    .collection("biolinks")
-    .find({})
-    .sort({ order: -1 })
-    .limit(1)
-    .toArray();
+    const videoUrl =
+      $("video.video-player source").attr("src") ||
+      "";
 
-  const order = last.length ? last[0].order + 1 : 1;
+    const last = await db
+      .collection("biolinks")
+      .find({})
+      .sort({ order: -1 })
+      .limit(1)
+      .toArray();
 
-  const result = await db.collection("biolinks").insertOne({
-    url,
-    title,
-    thumbnail,
-    order,
-    createdAt: new Date(),
-  });
+    const order = last.length ? last[0].order + 1 : 1;
 
-  return NextResponse.json({
-    success: true,
-    id: result.insertedId,
-  });
+    // 🔥 AUTO NUMBERED TITLE
+    const title = `#${order} Sauce`;
+
+    const result = await db.collection("biolinks").insertOne({
+      url,
+      title,
+      thumbnail,
+      videoUrl,
+      order,
+      createdAt: new Date(),
+    });
+
+    return NextResponse.json({
+      success: true,
+      id: result.insertedId,
+    });
+
+  } catch {
+    return NextResponse.json(
+      { error: "Scrape failed" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(req) {
-  const db = await connectDB();
-  const { id } = await req.json();
+  try {
+    const db = await connectDB();
+    const { id } = await req.json();
 
-  await db.collection("biolinks").deleteOne({
-    _id: new ObjectId(id),
-  });
+    await db.collection("biolinks").deleteOne({
+      _id: new ObjectId(id),
+    });
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+
+  } catch {
+    return NextResponse.json(
+      { error: "Delete failed" },
+      { status: 500 }
+    );
+  }
 }

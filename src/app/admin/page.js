@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 
 export default function AdminPage() {
+
   const [url, setUrl] = useState("");
   const [links, setLinks] = useState([]);
-  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const fetchLinks = async () => {
@@ -18,7 +18,7 @@ export default function AdminPage() {
     fetchLinks();
   }, []);
 
-  const previewLink = async () => {
+  const addLink = async () => {
     if (!url) return;
 
     setLoading(true);
@@ -34,9 +34,8 @@ export default function AdminPage() {
     const data = await res.json();
 
     if (data.success) {
-      fetchLinks();
       setUrl("");
-      setPreview(null);
+      fetchLinks();
     }
 
     setLoading(false);
@@ -58,39 +57,50 @@ export default function AdminPage() {
     <div style={styles.page}>
       <div style={styles.container}>
 
-        <h1 style={styles.title}>BioLinks Dashboard</h1>
+        <h1 style={styles.title}>Video Dashboard</h1>
 
         {/* ADD LINK */}
         <div style={styles.card}>
-          <h3>Add New Link</h3>
+          <h3>Add Video Link</h3>
 
           <input
             style={styles.input}
-            placeholder="Paste URL..."
+            placeholder="Paste video page URL..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
 
-          <button style={styles.button} onClick={previewLink}>
-            {loading ? "Adding..." : "Add Link"}
+          <button style={styles.button} onClick={addLink}>
+            {loading ? "Adding..." : "Add Video"}
           </button>
         </div>
 
-        {/* LINKS LIST */}
+        {/* VIDEO LIST */}
         <div style={styles.card}>
-          <h3>Saved Links</h3>
+          <h3>Saved Videos</h3>
 
           <div style={styles.grid}>
             {links.map((link) => (
-              <div key={link._id} style={styles.linkCard}>
-                <img
-                  src={link.thumbnail}
-                  style={styles.thumbnail}
-                />
 
-                <div style={styles.linkTitle}>
+              <div key={link._id} style={styles.videoCard}>
+
+                {link.thumbnail && (
+                  <img
+                    src={link.thumbnail}
+                    alt="thumbnail"
+                    style={styles.thumbnail}
+                  />
+                )}
+
+                <div style={styles.videoTitle}>
                   {link.title}
                 </div>
+
+                {link.videoUrl && (
+                  <video controls style={styles.video}>
+                    <source src={link.videoUrl} type="video/mp4" />
+                  </video>
+                )}
 
                 <button
                   style={styles.delete}
@@ -98,9 +108,12 @@ export default function AdminPage() {
                 >
                   Delete
                 </button>
+
               </div>
+
             ))}
           </div>
+
         </div>
 
       </div>
@@ -118,7 +131,7 @@ const styles = {
   },
 
   container: {
-    maxWidth: "900px",
+    maxWidth: "1000px",
     margin: "auto",
   },
 
@@ -153,35 +166,45 @@ const styles = {
 
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))",
-    gap: "15px",
-    marginTop: "15px",
+    gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))",
+    gap: "20px",
+    marginTop: "20px",
   },
 
-  linkCard: {
+  videoCard: {
     background: "#2b2d45",
     borderRadius: "10px",
     overflow: "hidden",
+    paddingBottom: "10px",
   },
 
   thumbnail: {
     width: "100%",
-    height: "120px",
+    height: "140px",
     objectFit: "cover",
   },
 
-  linkTitle: {
+  videoTitle: {
     padding: "10px",
     color: "white",
     fontSize: "14px",
   },
 
-  delete: {
+  video: {
     width: "100%",
+    maxHeight: "200px",
+  },
+
+  delete: {
+    width: "90%",
+    margin: "10px auto",
+    display: "block",
     padding: "8px",
     background: "#ff4d4d",
     border: "none",
+    borderRadius: "6px",
     color: "white",
     cursor: "pointer",
   },
+
 };
