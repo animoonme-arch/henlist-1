@@ -48,7 +48,14 @@ export default function SauceSlab({
           alignItems: "center",
         }}
       >
-        <div style={{ color: theme.avatarBorder }}>#{postNumber}</div>
+        <div
+          style={{
+            color: theme.avatarBorder,
+            border: "1px solid black",
+          }}
+        >
+          #{postNumber}
+        </div>
         <div>Sauce</div>
       </div>
     </div>
