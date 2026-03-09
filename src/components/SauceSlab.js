@@ -51,7 +51,8 @@ export default function SauceSlab({
         <div
           style={{
             color: theme.avatarBorder,
-            border: "1px solid black",
+            WebkitTextStroke: "2px black",
+            fontWeight: "bold",
           }}
         >
           #{postNumber}
