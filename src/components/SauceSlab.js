@@ -51,7 +51,7 @@ export default function SauceSlab({
         <div
           style={{
             color: theme.avatarBorder,
-            WebkitTextStroke: "2px black",
+            WebkitTextStroke: "1px black",
             fontWeight: "bold",
           }}
         >
