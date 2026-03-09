@@ -44,10 +44,12 @@ export default function SauceSlab({
           fontWeight: "500",
           flexGrow: 1,
           display: "flex",
+          gap: "10px",
           alignItems: "center",
         }}
       >
-        <span style={{ color: theme.avatarBorder }}>#{postNumber}</span> Sauce
+        <div style={{ color: theme.avatarBorder }}>#{postNumber}</div>
+        <div>Sauce</div>
       </div>
     </div>
   );
