@@ -15,7 +15,7 @@ export default function BioLayout({ appData }) {
   // Fetch biolinks
   useEffect(() => {
     const fetchLinks = async () => {
-      const res = await fetch("/api/biolinks");
+      const res = await fetch("/api/home");
       const data = await res.json();
       setAllPosts(data); // full objects with {title, thumbnail, videoUrl, ...}
     };
@@ -140,8 +140,8 @@ export default function BioLayout({ appData }) {
             {slabsToRender.map((item) => (
               <SauceSlab
                 key={item.post._id}
-                url={ item.post.url}
-                thumbnail={item.post.thumbnail}
+                url={item.post.url}
+                thumbnail={item.post.poster}
                 index={item.index}
                 totalPosts={totalPosts}
                 theme={theme}

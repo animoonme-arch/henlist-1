@@ -1709,9 +1709,8 @@ export const originalData = [
   "https://henpro.fun/watch/momiji-id-01",
   "https://henpro.fun/watch/jisshuusei-id-01",
   "https://henpro.fun/watch/you-bishoujo-miruku-chan-id-01",
-  "https://henpro.fun/watch/keraku-no-oh-king-of-pleasure-id-01"
+  "https://henpro.fun/watch/keraku-no-oh-king-of-pleasure-id-01",
 ];
-
 
 export const mockUser = {
   username: "Henpro",
@@ -1726,7 +1725,7 @@ export const mockUser = {
 
 export function getVisiblePostCount() {
   const INITIAL_REVEAL_DATE_MS = new Date(
-    "2025-12-09T23:00:00+05:30"
+    "2025-12-09T23:00:00+05:30",
   ).getTime();
   const REVEAL_RATE = 2; // 2 posts per day
   const INITIAL_POSTS = 2; // Start with 2 posts visible.
