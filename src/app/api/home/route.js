@@ -5,10 +5,9 @@ export async function GET() {
     const db = await connectDB();
     const collection = db.collection("content");
 
-    // ✅ Latest FIRST
     const data = await collection
       .find({})
-      .sort({ position: -1 }) // or createdAt: -1
+      .sort({ position: -1 }) // latest first
       .toArray();
 
     return Response.json(data);

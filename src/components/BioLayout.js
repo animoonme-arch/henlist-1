@@ -13,7 +13,7 @@ export default function BioLayout({ appData }) {
   const START_DATE = new Date("2026-04-01");
 
   const daysPassed = Math.floor(
-    (Date.now() - START_DATE.getTime()) / (1000 * 60 * 60 * 24),
+    (Date.now() - START_DATE.getTime()) / (1000 * 60 * 60 * 24)
   );
 
   // 🔥 2 POSTS PER DAY
@@ -25,7 +25,7 @@ export default function BioLayout({ appData }) {
       try {
         const res = await fetch("/api/home");
         const data = await res.json();
-        setAllPosts(data); // ✅ already latest first
+        setAllPosts(data);
       } catch (err) {
         console.error("Fetch error:", err);
       }
@@ -43,7 +43,7 @@ export default function BioLayout({ appData }) {
 
     if (!search) return true;
 
-    const postNumber = totalPosts - index;
+    const postNumber = index + 1;
 
     const isExactNumeric =
       !isNaN(parseInt(search)) && parseInt(search).toString() === search;
@@ -53,19 +53,32 @@ export default function BioLayout({ appData }) {
       : titleText.includes(search);
   });
 
-  // 🧠 Visible + upcoming
+  // 🧠 Visible + Upcoming (FINAL LOGIC)
+  const visiblePosts = filteredPosts.slice(0, dynamicVisibleCount);
+
+  const upcomingPosts =
+    !searchQuery
+      ? filteredPosts.slice(dynamicVisibleCount, dynamicVisibleCount + 2)
+      : [];
+
   const slabsToRender = [];
-  let upcomingCount = 0;
 
-  filteredPosts.forEach((post, index) => {
-    const isVisible = index < dynamicVisibleCount;
+  // 🔒 Upcoming FIRST → 5,6
+  upcomingPosts.forEach((post, i) => {
+    slabsToRender.push({
+      post,
+      locked: true,
+      displayNumber: visiblePosts.length + i + 1,
+    });
+  });
 
-    if (isVisible) {
-      slabsToRender.push({ post, index, locked: false });
-    } else if (!searchQuery && upcomingCount < 2) {
-      slabsToRender.push({ post, index, locked: true });
-      upcomingCount++;
-    }
+  // 🔓 Visible → 4,3,2,1
+  visiblePosts.forEach((post, index) => {
+    slabsToRender.push({
+      post,
+      locked: false,
+      displayNumber: visiblePosts.length - index,
+    });
   });
 
   return (
@@ -106,8 +119,8 @@ export default function BioLayout({ appData }) {
 
           <div className="bio-description">
             {user.bio}
-            <br />({Math.min(dynamicVisibleCount, totalPosts)} of {totalPosts}{" "}
-            Posts Visible)
+            <br />
+            ({Math.min(dynamicVisibleCount, totalPosts)} of {totalPosts} Posts Visible)
           </div>
 
           {/* 🔍 Search */}
@@ -128,8 +141,7 @@ export default function BioLayout({ appData }) {
                 key={item.post._id}
                 url={item.post.url}
                 thumbnail={item.post.poster}
-                index={item.index}
-                totalPosts={totalPosts}
+                displayNumber={item.displayNumber}
                 theme={theme}
                 locked={item.locked}
               />

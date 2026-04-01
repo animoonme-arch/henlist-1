@@ -3,13 +3,10 @@
 export default function SauceSlab({
   url,
   thumbnail,
-  index,
-  totalPosts,
+  displayNumber,
   theme,
   locked = false,
 }) {
-  const postNumber = totalPosts - index;
-
   const handleClick = () => {
     if (locked) return;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -32,20 +29,17 @@ export default function SauceSlab({
         position: "relative",
       }}
     >
-      {/* Thumbnail */}
       <img
         src={thumbnail || "/placeholder.jpg"}
         alt="thumbnail"
         style={{
           height: "50px",
-          width: "auto",
-          objectFit: "cover",
           borderRadius: "6px",
+          objectFit: "cover",
           filter: locked ? "blur(2px)" : "none",
         }}
       />
 
-      {/* Text */}
       <div
         style={{
           color: theme.linkColor,
@@ -56,11 +50,10 @@ export default function SauceSlab({
           alignItems: "center",
         }}
       >
-        <span>#{postNumber}</span>
+        <span>#{displayNumber}</span>
         <span>{locked ? "Coming Soon" : "Sauce"}</span>
       </div>
 
-      {/* 🔒 Lock icon */}
       {locked && (
         <div
           style={{
