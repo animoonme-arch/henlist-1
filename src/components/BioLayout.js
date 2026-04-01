@@ -2,22 +2,39 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Script from "next/script";
 import SauceSlab from "./SauceSlab";
 
-export default function BioLayout({ appData, adScripts }) {
-  const { allPosts, visibleCount, totalPosts, user, theme } = appData;
+export default function BioLayout({ appData }) {
+  const { visibleCount, user, theme } = appData;
+
   const [searchQuery, setSearchQuery] = useState("");
   const [unlockedState, setUnlockedState] = useState({});
+  const [allPosts, setAllPosts] = useState([]);
+
+  const totalPosts = allPosts.length;
 
   useEffect(() => {
     const STORAGE_KEY = "henpro_unlocked_titles";
     const stored = localStorage.getItem(STORAGE_KEY);
+
     try {
       setUnlockedState(stored ? JSON.parse(stored) : {});
     } catch {
       setUnlockedState({});
     }
+  }, []);
+
+  // FETCH BIOLINKS
+  useEffect(() => {
+    const fetchLinks = async () => {
+      const res = await fetch("/api/biolinks");
+      const data = await res.json();
+
+      const titles = data.map((link) => link.title);
+      setAllPosts(titles);
+    };
+
+    fetchLinks();
   }, []);
 
   const handleUnlock = (title) => {
@@ -85,11 +102,9 @@ export default function BioLayout({ appData, adScripts }) {
       style={{
         [getCssVars()]: "",
         maxHeight: "100vh",
-        overflowY: "hidden",
+        overflowY: "auto",
       }}
     >
-      {/* SAFE Script injection */}
-
       <div className="bio-page">
         <img
           src={`/${user.design}`}
@@ -98,30 +113,6 @@ export default function BioLayout({ appData, adScripts }) {
         />
 
         <div className="bio-content">
-          <div
-            className="bio-ad ad-top"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              padding: "3px 0",
-              backgroundColor: "#201f31",
-            }}
-          >
-            <iframe
-              src="/ad"
-              title="Sponsored Ad"
-              scrolling="no"
-              referrerPolicy="no-referrer-when-downgrade"
-              style={{
-                width: "100%",
-                maxWidth: "728px",
-                height: "80px",
-                border: "none",
-                borderRadius: "10px",
-                backgroundColor: "#201f31",
-              }}
-            />
-          </div>
 
           <div className="bio-avatar">
             <img src={user.avatar} alt="avatar" />
@@ -131,13 +122,11 @@ export default function BioLayout({ appData, adScripts }) {
 
           <div className="bio-description">
             {user.bio}
-            {/* <br />({visibleCount} of {totalPosts} Posts Visible) */}
           </div>
 
           <div className="bio-search-container">
             <input
               type="text"
-              id="bio-search-input"
               className="bio-search-input"
               placeholder="Search by Exact Post # (e.g., 10) or Title..."
               value={searchQuery}
@@ -145,7 +134,7 @@ export default function BioLayout({ appData, adScripts }) {
             />
           </div>
 
-          <div className="bio-links" id="bio-links-container">
+          <div className="bio-links">
             {slabsToRender.map((post) => (
               <SauceSlab
                 key={post.index}
@@ -160,29 +149,6 @@ export default function BioLayout({ appData, adScripts }) {
             ))}
           </div>
 
-          <div
-            className="bio-ad ad-bottom"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              padding: "3px 0",
-              backgroundColor: "#201f31",
-            }}
-          >
-            <iframe
-              src="/ad"
-              title="Sponsored Ad"
-              scrolling="no"
-              style={{
-                width: "100%",
-                maxWidth: "728px",
-                height: "80px",
-                border: "none",
-                borderRadius: "10px",
-                backgroundColor: "#201f31",
-              }}
-            />
-          </div>
         </div>
       </div>
     </div>
