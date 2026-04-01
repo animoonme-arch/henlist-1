@@ -24,11 +24,11 @@ export default function SauceSlab({
       }}
       onClick={handleClick}
     >
-      <img
+      {/* <img
         src={thumbnail || "/placeholder.jpg"}
         className="sauce-thumb"
         alt="thumbnail"
-      />
+      /> */}
 
       <div
         className="sauce-text"
