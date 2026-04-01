@@ -15,18 +15,17 @@ export default function SauceSlab({
   const postNumber = totalPosts - index;
   const [isUnlocked, setIsUnlocked] = useState(false);
 
-  const handleClick = () => {
-    if (isVisible) {
-      if (url) window.open(url, "_blank", "noopener,noreferrer");
-      return;
-    }
+  const showTitle = isVisible || isUnlocked;
 
-    if (!isUnlocked) {
+  const handleUnlock = () => {
+    if (!isVisible && !isUnlocked) {
       setIsUnlocked(true);
       onUnlock && onUnlock(title);
-      return;
     }
+  };
 
+  const handleOpen = (e) => {
+    e.stopPropagation();
     if (url) window.open(url, "_blank", "noopener,noreferrer");
   };
 
@@ -38,37 +37,39 @@ export default function SauceSlab({
       style={{
         background: theme.linkBg,
         boxShadow: theme.linkShadow,
-        cursor: "pointer",
         padding: "12px",
         borderRadius: "10px",
-        transition: "0.3s ease",
         opacity: isVisible ? 1 : 0.7,
-        filter: isVisible || isUnlocked ? "none" : "blur(2px)",
+        filter: showTitle ? "none" : "blur(2px)",
+        transition: "0.3s ease",
+        cursor: !isVisible ? "pointer" : "default",
       }}
-      onClick={handleClick}
+      onClick={!isVisible ? handleUnlock : undefined}
     >
       <div
         className="sauce-text"
         style={{
           color: theme.linkColor,
           display: "flex",
-          gap: "8px",
+          gap: "6px",
           alignItems: "center",
         }}
       >
-        {/* Post Number */}
+        {/* ✅ Number */}
         <span style={{ color: theme.avatarBorder }}>
           #{postNumber}
         </span>
 
-        {/* 🔥 Title as Link */}
+        {/* ✅ Title = Link */}
         <span
+          onClick={showTitle ? handleOpen : undefined}
           style={{
-            textDecoration: "underline",
+            textDecoration: showTitle ? "underline" : "none",
+            cursor: showTitle ? "pointer" : "default",
             wordBreak: "break-word",
           }}
         >
-          {isVisible || isUnlocked
+          {showTitle
             ? title
             : isNextUpcoming
             ? "🔒 Unlock to view"
