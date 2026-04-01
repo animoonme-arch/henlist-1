@@ -44,7 +44,7 @@ export default function SauceSlab({
         transition: "0.3s ease",
         cursor: !isVisible ? "pointer" : "default",
       }}
-      onClick={!isVisible ? handleUnlock : undefined}
+      onClick={handleOpen}
     >
       <div
         className="sauce-text"
@@ -54,7 +54,7 @@ export default function SauceSlab({
           gap: "6px",
           alignItems: "center",
         }}
-        onClick={handleOpen}
+        // onClick={handleOpen}
       >
         {/* ✅ Number */}
         <span style={{ color: theme.avatarBorder }}>#{postNumber}</span>
