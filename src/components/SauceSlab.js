@@ -1,3 +1,4 @@
+// src/components/SauceSlab.js
 "use client";
 
 export default function SauceSlab({
@@ -9,35 +10,54 @@ export default function SauceSlab({
 }) {
   const postNumber = totalPosts - index;
 
-  const handleClick = () => {
-    if (!url) return;
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <div
       className="bio-link sauce-slab"
       style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        padding: "5px 10px",
+        cursor: "pointer",
         background: theme.linkBg,
         boxShadow: theme.linkShadow,
-        cursor: "pointer",
+        borderRadius: "8px",
       }}
-      onClick={handleClick}
+      onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
     >
-      {/* <img
+      {/* Thumbnail on left */}
+      <img
         src={thumbnail || "/placeholder.jpg"}
-        className="sauce-thumb"
         alt="thumbnail"
-      /> */}
+        style={{
+          height: "50px",
+          width: "auto",
+          objectFit: "cover",
+          borderRadius: "6px",
+        }}
+      />
 
+      {/* Centered text */}
       <div
-        className="sauce-text"
-        style={{ color: theme.linkColor }}
+        style={{
+          color: theme.linkColor,
+          fontWeight: "500",
+          flexGrow: 1,
+          display: "flex",
+          gap: "10px",
+          alignItems: "center",
+        }}
       >
-        <span style={{ color: theme.avatarBorder }}>
+        <div
+          style={{
+            color: theme.avatarBorder,
+            WebkitTextStroke: "1px black",
+            fontWeight: "bold",
+          }}
+        >
           #{postNumber}
-        </span>{" "}
-        Sauce
+        </div>
+        <div>Sauce</div>
       </div>
     </div>
   );
