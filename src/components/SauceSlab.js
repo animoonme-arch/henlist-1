@@ -24,9 +24,9 @@ export default function SauceSlab({
     }
   };
 
-  const handleOpen = (e) => {
+  const handleOpen = (e, link) => {
     e.stopPropagation();
-    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    if (link) window.open(link, "_blank", "noopener,noreferrer");
   };
 
   if (!isVisible && !isNextUpcoming) return null;
@@ -54,11 +54,10 @@ export default function SauceSlab({
           gap: "6px",
           alignItems: "center",
         }}
+        onClick={handleOpen(title)}
       >
         {/* ✅ Number */}
-        <span style={{ color: theme.avatarBorder }}>
-          #{postNumber}
-        </span>
+        <span style={{ color: theme.avatarBorder }}>#{postNumber}</span>
 
         {/* ✅ Title = Link */}
         <span
@@ -70,10 +69,10 @@ export default function SauceSlab({
           }}
         >
           {showTitle
-            ? title
+            ? "Sause"
             : isNextUpcoming
-            ? "🔒 Unlock to view"
-            : "Hidden"}
+              ? "🔒 Unlock to view"
+              : "Hidden"}
         </span>
       </div>
     </div>
