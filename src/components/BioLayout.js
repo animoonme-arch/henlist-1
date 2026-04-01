@@ -2,32 +2,33 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Script from "next/script";
 import SauceSlab from "./SauceSlab";
 
-export default function BioLayout({ appData }) {
-  const { visibleCount, user, theme } = appData;
-
+export default function BioLayout({ appData, adScripts }) {
+  const { allPosts, visibleCount, totalPosts, user, theme } = appData;
   const [searchQuery, setSearchQuery] = useState("");
-  const [allPosts, setAllPosts] = useState([]);
+  const [unlockedState, setUnlockedState] = useState({});
 
-  const totalPosts = allPosts.length;
-
-  // Fetch biolinks
   useEffect(() => {
-    const fetchLinks = async () => {
-      const res = await fetch("/api/biolinks");
-      const data = await res.json();
-      setAllPosts(data); // full objects with {title, thumbnail, videoUrl, ...}
-    };
-    fetchLinks();
+    const STORAGE_KEY = "henpro_unlocked_titles";
+    const stored = localStorage.getItem(STORAGE_KEY);
+    try {
+      setUnlockedState(stored ? JSON.parse(stored) : {});
+    } catch {
+      setUnlockedState({});
+    }
   }, []);
 
-  // Filter posts based on search
-  const filteredPosts = allPosts.filter((post, index) => {
-    const titleText = post.title.toLowerCase();
+  const handleUnlock = (title) => {
+    setUnlockedState((prev) => ({ ...prev, [title]: true }));
+  };
+
+  const filteredPosts = allPosts.filter((title, index) => {
+    const titleText = title.toLowerCase();
     const search = searchQuery.toLowerCase().trim();
 
-    if (!search) return true;
+    if (search === "") return true;
 
     const postNumber = totalPosts - index;
     const isExactNumeric =
@@ -38,24 +39,23 @@ export default function BioLayout({ appData }) {
       : titleText.includes(search);
   });
 
-  // Determine which slabs to render
   const slabsToRender = [];
   let upcomingCount = 0;
 
-  allPosts.forEach((post, index) => {
+  allPosts.forEach((title, index) => {
     const sequentialNumber = totalPosts - index;
     const isVisible = sequentialNumber <= visibleCount;
 
-    if (!filteredPosts.includes(post) && searchQuery.trim() !== "") return;
+    if (!filteredPosts.includes(title) && searchQuery.trim() !== "") return;
 
     if (isVisible) {
       slabsToRender.push({
-        post,
+        title,
         index,
         isVisible: true,
         isNextUpcoming: false,
       });
-    } else if (!searchQuery) {
+    } else if (searchQuery.trim() === "") {
       const isNextUpcoming =
         sequentialNumber > visibleCount &&
         sequentialNumber <= visibleCount + 2 &&
@@ -63,7 +63,7 @@ export default function BioLayout({ appData }) {
 
       if (isNextUpcoming) {
         slabsToRender.push({
-          post,
+          title,
           index,
           isVisible: false,
           isNextUpcoming: true,
@@ -73,14 +73,23 @@ export default function BioLayout({ appData }) {
     }
   });
 
+  const getCssVars = () => {
+    return Object.keys(theme)
+      .map((key) => `--theme-${key}: ${theme[key]};`)
+      .join(" ");
+  };
+
   return (
     <div
       className="page-wrapper"
       style={{
+        [getCssVars()]: "",
         maxHeight: "100vh",
-        overflowY: "auto",
+        overflowY: "hidden",
       }}
     >
+      {/* SAFE Script injection */}
+
       <div className="bio-page">
         <img
           src={`/${user.design}`}
@@ -89,7 +98,6 @@ export default function BioLayout({ appData }) {
         />
 
         <div className="bio-content">
-          {/* Top Ad */}
           <div
             className="bio-ad ad-top"
             style={{
@@ -107,7 +115,7 @@ export default function BioLayout({ appData }) {
               style={{
                 width: "100%",
                 maxWidth: "728px",
-                height: "90px",
+                height: "80px",
                 border: "none",
                 borderRadius: "10px",
                 backgroundColor: "#201f31",
@@ -123,12 +131,13 @@ export default function BioLayout({ appData }) {
 
           <div className="bio-description">
             {user.bio}
-            <br />({visibleCount} of {totalPosts} Posts Visible)
+            {/* <br />({visibleCount} of {totalPosts} Posts Visible) */}
           </div>
 
           <div className="bio-search-container">
             <input
               type="text"
+              id="bio-search-input"
               className="bio-search-input"
               placeholder="Search by Exact Post # (e.g., 10) or Title..."
               value={searchQuery}
@@ -136,20 +145,21 @@ export default function BioLayout({ appData }) {
             />
           </div>
 
-          <div className="bio-links">
-            {slabsToRender.map((item) => (
+          <div className="bio-links" id="bio-links-container">
+            {slabsToRender.map((post) => (
               <SauceSlab
-                key={item.post._id}
-                url={ item.post.url}
-                thumbnail={item.post.thumbnail}
-                index={item.index}
+                key={post.index}
+                title={post.title}
+                index={post.index}
                 totalPosts={totalPosts}
                 theme={theme}
+                isVisible={post.isVisible}
+                isNextUpcoming={post.isNextUpcoming}
+                onUnlock={handleUnlock}
               />
             ))}
           </div>
 
-          {/* Bottom Ad */}
           <div
             className="bio-ad ad-bottom"
             style={{
@@ -166,7 +176,7 @@ export default function BioLayout({ appData }) {
               style={{
                 width: "100%",
                 maxWidth: "728px",
-                height: "90px",
+                height: "80px",
                 border: "none",
                 borderRadius: "10px",
                 backgroundColor: "#201f31",
