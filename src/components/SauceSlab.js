@@ -1,4 +1,3 @@
-// src/components/SauceSlab.js
 "use client";
 
 export default function SauceSlab({
@@ -7,25 +6,33 @@ export default function SauceSlab({
   index,
   totalPosts,
   theme,
+  locked = false,
 }) {
   const postNumber = totalPosts - index;
+
+  const handleClick = () => {
+    if (locked) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div
       className="bio-link sauce-slab"
+      onClick={handleClick}
       style={{
         display: "flex",
         alignItems: "center",
         gap: "10px",
         padding: "5px 10px",
-        cursor: "pointer",
+        cursor: locked ? "not-allowed" : "pointer",
         background: theme.linkBg,
         boxShadow: theme.linkShadow,
         borderRadius: "8px",
+        opacity: locked ? 0.6 : 1,
+        position: "relative",
       }}
-      onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
     >
-      {/* Thumbnail on left */}
+      {/* Thumbnail */}
       <img
         src={thumbnail || "/placeholder.jpg"}
         alt="thumbnail"
@@ -34,10 +41,11 @@ export default function SauceSlab({
           width: "auto",
           objectFit: "cover",
           borderRadius: "6px",
+          filter: locked ? "blur(2px)" : "none",
         }}
       />
 
-      {/* Centered text */}
+      {/* Text */}
       <div
         style={{
           color: theme.linkColor,
@@ -49,8 +57,22 @@ export default function SauceSlab({
         }}
       >
         <span>#{postNumber}</span>
-        <span>Sauce</span>
+        <span>{locked ? "Coming Soon" : "Sauce"}</span>
       </div>
+
+      {/* 🔒 Lock icon */}
+      {locked && (
+        <div
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
+          🔒
+        </div>
+      )}
     </div>
   );
 }

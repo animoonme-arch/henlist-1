@@ -5,13 +5,17 @@ export async function GET() {
     const db = await connectDB();
     const collection = db.collection("content");
 
+    // ✅ Latest FIRST
     const data = await collection
       .find({})
-      .sort({ position: 1 }) // 🔥 keeps w/s/w/s
+      .sort({ position: -1 }) // or createdAt: -1
       .toArray();
 
     return Response.json(data);
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    return Response.json(
+      { error: err.message || "Server Error" },
+      { status: 500 }
+    );
   }
 }

@@ -9,27 +9,23 @@ export default function BioLayout({ appData }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [allPosts, setAllPosts] = useState([]);
 
-  const totalPosts = allPosts.length;
-
-  // 🔥 START DATE (CHANGE THIS TO YOUR LAUNCH DATE)
+  // 🔥 START DATE
   const START_DATE = new Date("2026-04-01");
 
   const daysPassed = Math.floor(
-    (Date.now() - START_DATE.getTime()) / (1000 * 60 * 60 * 24)
+    (Date.now() - START_DATE.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   // 🔥 2 POSTS PER DAY
   const dynamicVisibleCount = Math.max(2, daysPassed * 2);
 
-  // 📦 Fetch from Mongo API
+  // 📦 Fetch
   useEffect(() => {
     const fetchLinks = async () => {
       try {
         const res = await fetch("/api/home");
         const data = await res.json();
-
-        // 🔥 IMPORTANT: reverse so newest = last (fix numbering logic)
-        setAllPosts(data.reverse());
+        setAllPosts(data); // ✅ already latest first
       } catch (err) {
         console.error("Fetch error:", err);
       }
@@ -38,7 +34,9 @@ export default function BioLayout({ appData }) {
     fetchLinks();
   }, []);
 
-  // 🔍 Search filter
+  const totalPosts = allPosts.length;
+
+  // 🔍 SEARCH
   const filteredPosts = allPosts.filter((post, index) => {
     const titleText = post.title?.toLowerCase() || "";
     const search = searchQuery.toLowerCase().trim();
@@ -55,35 +53,18 @@ export default function BioLayout({ appData }) {
       : titleText.includes(search);
   });
 
-  // 🧠 Decide visible + upcoming
+  // 🧠 Visible + upcoming
   const slabsToRender = [];
   let upcomingCount = 0;
 
-  allPosts.forEach((post, index) => {
-    const sequentialNumber = totalPosts - index;
-
-    const isVisible = sequentialNumber <= dynamicVisibleCount;
-
-    if (!filteredPosts.includes(post) && searchQuery.trim() !== "") return;
+  filteredPosts.forEach((post, index) => {
+    const isVisible = index < dynamicVisibleCount;
 
     if (isVisible) {
-      slabsToRender.push({
-        post,
-        index,
-      });
-    } else if (!searchQuery) {
-      const isNextUpcoming =
-        sequentialNumber > dynamicVisibleCount &&
-        sequentialNumber <= dynamicVisibleCount + 2 &&
-        upcomingCount < 2;
-
-      if (isNextUpcoming) {
-        slabsToRender.push({
-          post,
-          index,
-        });
-        upcomingCount++;
-      }
+      slabsToRender.push({ post, index, locked: false });
+    } else if (!searchQuery && upcomingCount < 2) {
+      slabsToRender.push({ post, index, locked: true });
+      upcomingCount++;
     }
   });
 
@@ -101,18 +82,10 @@ export default function BioLayout({ appData }) {
 
         <div className="bio-content">
           {/* 🔝 Top Ad */}
-          <div
-            className="bio-ad ad-top"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              padding: "3px 0",
-              backgroundColor: "#201f31",
-            }}
-          >
+          <div className="bio-ad ad-top">
             <iframe
               src="/ad"
-              title="Sponsored Ad"
+              title="Ad"
               scrolling="no"
               style={{
                 width: "100%",
@@ -120,7 +93,6 @@ export default function BioLayout({ appData }) {
                 height: "90px",
                 border: "none",
                 borderRadius: "10px",
-                backgroundColor: "#201f31",
               }}
             />
           </div>
@@ -134,7 +106,8 @@ export default function BioLayout({ appData }) {
 
           <div className="bio-description">
             {user.bio}
-            <br />({dynamicVisibleCount} of {totalPosts} Posts Visible)
+            <br />({Math.min(dynamicVisibleCount, totalPosts)} of {totalPosts}{" "}
+            Posts Visible)
           </div>
 
           {/* 🔍 Search */}
@@ -158,23 +131,16 @@ export default function BioLayout({ appData }) {
                 index={item.index}
                 totalPosts={totalPosts}
                 theme={theme}
+                locked={item.locked}
               />
             ))}
           </div>
 
           {/* 🔽 Bottom Ad */}
-          <div
-            className="bio-ad ad-bottom"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              padding: "3px 0",
-              backgroundColor: "#201f31",
-            }}
-          >
+          <div className="bio-ad ad-bottom">
             <iframe
               src="/ad"
-              title="Sponsored Ad"
+              title="Ad"
               scrolling="no"
               style={{
                 width: "100%",
@@ -182,7 +148,6 @@ export default function BioLayout({ appData }) {
                 height: "90px",
                 border: "none",
                 borderRadius: "10px",
-                backgroundColor: "#201f31",
               }}
             />
           </div>
