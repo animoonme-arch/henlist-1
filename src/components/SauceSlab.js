@@ -16,24 +16,20 @@ export default function SauceSlab({
   const [isUnlocked, setIsUnlocked] = useState(false);
 
   const handleClick = () => {
-    // ✅ If already visible → open directly
     if (isVisible) {
       if (url) window.open(url, "_blank", "noopener,noreferrer");
       return;
     }
 
-    // 🔒 Locked → unlock first
     if (!isUnlocked) {
       setIsUnlocked(true);
       onUnlock && onUnlock(title);
       return;
     }
 
-    // 🔓 After unlock → open
     if (url) window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  // ❌ Hide completely if not visible & not upcoming
   if (!isVisible && !isNextUpcoming) return null;
 
   return (
@@ -43,23 +39,41 @@ export default function SauceSlab({
         background: theme.linkBg,
         boxShadow: theme.linkShadow,
         cursor: "pointer",
-        opacity: isVisible ? 1 : 0.7,
-        filter: isVisible ? "none" : "blur(2px)",
+        padding: "12px",
+        borderRadius: "10px",
         transition: "0.3s ease",
+        opacity: isVisible ? 1 : 0.7,
+        filter: isVisible || isUnlocked ? "none" : "blur(2px)",
       }}
       onClick={handleClick}
     >
-      <div className="sauce-text" style={{ color: theme.linkColor }}>
+      <div
+        className="sauce-text"
+        style={{
+          color: theme.linkColor,
+          display: "flex",
+          gap: "8px",
+          alignItems: "center",
+        }}
+      >
+        {/* Post Number */}
         <span style={{ color: theme.avatarBorder }}>
           #{postNumber}
-        </span>{" "}
-        {isVisible
-          ? title
-          : isUnlocked
-          ? title
-          : isNextUpcoming
-          ? "🔒 Unlock to view"
-          : "Hidden"}
+        </span>
+
+        {/* 🔥 Title as Link */}
+        <span
+          style={{
+            textDecoration: "underline",
+            wordBreak: "break-word",
+          }}
+        >
+          {isVisible || isUnlocked
+            ? title
+            : isNextUpcoming
+            ? "🔒 Unlock to view"
+            : "Hidden"}
+        </span>
       </div>
     </div>
   );
