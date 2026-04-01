@@ -61,7 +61,7 @@ export default function SauceSlab({
 
         {/* ✅ Title = Link */}
         <span
-          onClick={showTitle ? handleOpen : undefined}
+          // onClick={showTitle ? handleOpen : undefined}
           style={{
             textDecoration: showTitle ? "underline" : "none",
             cursor: showTitle ? "pointer" : "default",
