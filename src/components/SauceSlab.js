@@ -3,8 +3,7 @@
 import { useState } from "react";
 
 export default function SauceSlab({
-  title,
-  url,
+  title, // this is your link
   index,
   totalPosts,
   theme,
@@ -24,9 +23,15 @@ export default function SauceSlab({
     }
   };
 
-  const handleOpen = (e) => {
-    e.stopPropagation();
-    if (title) window.open(title, "_blank", "noopener,noreferrer");
+  const handleOpen = () => {
+    if (!showTitle) {
+      handleUnlock();
+      return;
+    }
+
+    if (title) {
+      window.open(title, "_blank", "noopener,noreferrer");
+    }
   };
 
   if (!isVisible && !isNextUpcoming) return null;
@@ -42,7 +47,7 @@ export default function SauceSlab({
         opacity: isVisible ? 1 : 0.7,
         filter: showTitle ? "none" : "blur(2px)",
         transition: "0.3s ease",
-        cursor: !isVisible ? "pointer" : "default",
+        cursor: showTitle ? "pointer" : "pointer", // always clickable
       }}
       onClick={handleOpen}
     >
@@ -54,25 +59,24 @@ export default function SauceSlab({
           gap: "6px",
           alignItems: "center",
         }}
-        // onClick={handleOpen}
       >
         {/* ✅ Number */}
-        <span style={{ color: theme.avatarBorder }}>#{postNumber}</span>
+        <span style={{ color: theme.avatarBorder }}>
+          #{postNumber}
+        </span>
 
-        {/* ✅ Title = Link */}
+        {/* ✅ Title */}
         <span
-          // onClick={showTitle ? handleOpen : undefined}
           style={{
             textDecoration: showTitle ? "underline" : "none",
-            cursor: showTitle ? "pointer" : "default",
             wordBreak: "break-word",
           }}
         >
           {showTitle
             ? "Sause"
             : isNextUpcoming
-              ? "🔒 Unlock to view"
-              : "Hidden"}
+            ? "🔒 Unlock to view"
+            : "Hidden"}
         </span>
       </div>
     </div>
