@@ -24,6 +24,9 @@ export default function SauceSlab({
   };
 
   const handleOpen = () => {
+    // 🚫 Upcoming should not be clickable
+    if (isNextUpcoming) return;
+
     if (!showTitle) {
       handleUnlock();
       return;
@@ -44,10 +47,10 @@ export default function SauceSlab({
         boxShadow: theme?.linkShadow || "none",
         padding: "12px",
         borderRadius: "10px",
-        opacity: isVisible ? 1 : 0.7,
+        opacity: isNextUpcoming ? 0.6 : isVisible ? 1 : 0.7,
         filter: showTitle || isNextUpcoming ? "none" : "blur(2px)",
         transition: "0.3s ease",
-        cursor: "pointer",
+        cursor: isNextUpcoming ? "not-allowed" : "pointer",
       }}
       onClick={handleOpen}
     >
