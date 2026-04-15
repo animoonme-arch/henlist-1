@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function SauceSlab({
-  title, // this is your link
+  title,
   index,
   totalPosts,
   theme,
@@ -19,7 +19,7 @@ export default function SauceSlab({
   const handleUnlock = () => {
     if (!isVisible && !isUnlocked) {
       setIsUnlocked(true);
-      onUnlock && onUnlock(title);
+      if (onUnlock) onUnlock(title);
     }
   };
 
@@ -40,32 +40,30 @@ export default function SauceSlab({
     <div
       className="bio-link sauce-slab"
       style={{
-        background: theme.linkBg,
-        boxShadow: theme.linkShadow,
+        background: theme?.linkBg || "#222",
+        boxShadow: theme?.linkShadow || "none",
         padding: "12px",
         borderRadius: "10px",
         opacity: isVisible ? 1 : 0.7,
-        filter: showTitle ? "none" : "blur(2px)",
+        filter: showTitle || isNextUpcoming ? "none" : "blur(2px)",
         transition: "0.3s ease",
-        cursor: showTitle ? "pointer" : "pointer", // always clickable
+        cursor: "pointer",
       }}
       onClick={handleOpen}
     >
       <div
         className="sauce-text"
         style={{
-          color: theme.linkColor,
+          color: theme?.linkColor || "#fff",
           display: "flex",
           gap: "6px",
           alignItems: "center",
         }}
       >
-        {/* ✅ Number */}
-        <span style={{ color: theme.avatarBorder }}>
+        <span style={{ color: theme?.avatarBorder || "#999" }}>
           #{postNumber}
         </span>
 
-        {/* ✅ Title */}
         <span
           style={{
             textDecoration: showTitle ? "underline" : "none",
@@ -73,9 +71,9 @@ export default function SauceSlab({
           }}
         >
           {showTitle
-            ? "Sause"
+            ? "Sauce"
             : isNextUpcoming
-            ? "🔒 Unlock to view"
+            ? "Upcoming"
             : "Hidden"}
         </span>
       </div>
